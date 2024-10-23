@@ -11,18 +11,20 @@ services:
 
   api_server:
     build: .
-    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    command: uvicorn main:app --host 0.0.0.0 --port 5618
     environment:
       - REDIS_HOST=redis
+    env_file:
+      - .env
     depends_on:
       - redis
     ports:
-      - '8000:8000'
+      - '5618:5618'
     restart: always
 
   worker:
     build: .
-    command: python -m agentserve.worker
+    command: python -m agentserve/worker.py
     environment:
       - REDIS_HOST=redis
     depends_on:
