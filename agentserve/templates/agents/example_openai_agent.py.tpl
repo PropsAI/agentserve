@@ -2,7 +2,7 @@ from agentserve import Agent
 from openai import OpenAI
 
 class ExampleAgent(Agent):
-    def process(self, task_data: Dict[str, Any]):
+    def process(self, task_data):
         client = OpenAI()
         response = client.chat.completions.create(
             model="gpt-4o-mini",
