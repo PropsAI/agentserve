@@ -24,7 +24,7 @@ services:
 
   worker:
     build: .
-    command: python -m agentserve/worker.py
+    command: python agentserve/worker.py
     environment:
       - REDIS_HOST=redis
     depends_on:
