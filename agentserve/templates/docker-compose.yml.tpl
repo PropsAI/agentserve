@@ -22,7 +22,7 @@ services:
 
   worker:
     build: .
-    command: python -m agentserve.cli worker
+    command: python -m agentserve.worker
     environment:
       - REDIS_HOST=redis
     depends_on:
