@@ -10,22 +10,22 @@ TEMPLATES_DIR = Path(__file__).parent / 'templates'
 # Mapping of framework choices to their respective agent import and class names
 FRAMEWORKS = {
     'openai': {
-        'agent_import': 'from example_openai_agent import OpenAIAgent  # Replace with your OpenAI agent class name',
-        'agent_class': 'OpenAIAgent',
+        'agent_import': 'from example_openai_agent import ExampleAgent',
+        'agent_class': 'ExampleAgent',
         'agent_template_filename': 'example_openai_agent.py.tpl'
     },
     'langchain': {
-        'agent_import': 'from example_langchain_agent import LangChainAgent  # Replace with your LangChain agent class name',
-        'agent_class': 'LangChainAgent',
+        'agent_import': 'from example_langchain_agent import ExampleAgent',
+        'agent_class': 'ExampleAgent',
         'agent_template_filename': 'example_langchain_agent.py.tpl'
     },
     'llama': {
-        'agent_import': 'from example_llama_agent import LlamaIndexAgent  # Replace with your Llama Index agent class name',
-        'agent_class': 'LlamaIndexAgent',
+        'agent_import': 'from example_llama_agent import ExampleAgent',
+        'agent_class': 'ExampleAgent',
         'agent_template_filename': 'example_llamaindex_agent.py.tpl'
     },
     'blank': {
-        'agent_import': 'from example_agent import ExampleAgent  # Replace with your agent class name',
+        'agent_import': 'from example_agent import ExampleAgent',
         'agent_class': 'ExampleAgent',
         'agent_template_filename': 'example_agent.py.tpl'
     }
