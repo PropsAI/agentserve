@@ -11,19 +11,23 @@ TEMPLATES_DIR = Path(__file__).parent / 'templates'
 FRAMEWORKS = {
     'openai': {
         'agent_import': 'from example_openai_agent import OpenAIAgent  # Replace with your OpenAI agent class name',
-        'agent_class': 'OpenAIAgent'
+        'agent_class': 'OpenAIAgent',
+        'agent_template_filename': 'example_openai_agent.py.tpl'
     },
     'langchain': {
         'agent_import': 'from example_langchain_agent import LangChainAgent  # Replace with your LangChain agent class name',
-        'agent_class': 'LangChainAgent'
+        'agent_class': 'LangChainAgent',
+        'agent_template_filename': 'example_langchain_agent.py.tpl'
     },
     'llama': {
         'agent_import': 'from example_llama_agent import LlamaIndexAgent  # Replace with your Llama Index agent class name',
-        'agent_class': 'LlamaIndexAgent'
+        'agent_class': 'LlamaIndexAgent',
+        'agent_template_filename': 'example_llamaindex_agent.py.tpl'
     },
     'blank': {
         'agent_import': 'from example_agent import ExampleAgent  # Replace with your agent class name',
-        'agent_class': 'ExampleAgent'
+        'agent_class': 'ExampleAgent',
+        'agent_template_filename': 'example_agent.py.tpl'
     }
 }
 
@@ -70,6 +74,7 @@ def init(project_name, framework):
 
     agent_import = FRAMEWORKS[framework]['agent_import']
     agent_class = FRAMEWORKS[framework]['agent_class']
+    agent_template_filename = FRAMEWORKS[framework]['agent_template_filename']
 
     main_content = main_content.replace('{{AGENT_IMPORT}}', agent_import)
     main_content = main_content.replace('{{AGENT_CLASS}}', agent_class)
@@ -86,8 +91,8 @@ def init(project_name, framework):
         shutil.copyfile(src_path, dst_path)
 
     # Handle agent example file based on chosen framework
-    agent_template_filename = f'example_{framework}_agent.py.tpl'
-    agent_src_path = TEMPLATES_DIR / agent_template_filename
+    agent_template_filename = FRAMEWORKS[framework]['agent_template_filename']
+    agent_src_path = TEMPLATES_DIR / "agents" /  agent_template_filename
     agent_dst_path = project_path / agent_template_filename.replace('.tpl', '.py')
     shutil.copyfile(agent_src_path, agent_dst_path)
 
