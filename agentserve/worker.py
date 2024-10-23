@@ -11,3 +11,6 @@ def run_worker():
     with Connection(redis_conn):
         worker = Worker(Queue())
         worker.work()
+
+if __name__ == '__main__':
+    run_worker()

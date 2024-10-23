@@ -34,7 +34,7 @@ FRAMEWORKS = {
 @click.group()
 def main():
     """CLI tool for managing AI agents."""
-    click.echo("Welcome to AgentServe CLI\n\n")
+    click.echo(click.style("Welcome to AgentServe CLI\n\n", fg='green', bold=True))
     click.echo("Go to https://github.com/Props/agentserve for more information.\n\n\n")
 
 @main.command()
@@ -119,6 +119,7 @@ def init(project_name, framework):
             pass
 
     click.echo(f"Initialized new agent project at '{project_path}' with '{framework}' framework.")
+    click.echo("Now run 'cd {project_name}' and then 'agentserve run' to start the API server and worker.")
 
 @main.command()
 def setup():
@@ -152,6 +153,11 @@ def setup():
             f.write('agentserve\n')
 
     click.echo(f"AgentServe has been added to the project at '{project_path}'.")
+
+@main.command()
+def run():
+    """Run the API server and worker."""
+    os.system('docker-compose up --build')
 
 if __name__ == '__main__':
     main()
