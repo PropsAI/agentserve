@@ -34,11 +34,8 @@ FRAMEWORKS = {
 @click.group()
 def main():
     """CLI tool for managing AI agents."""
-    click.echo("Welcome to AgentServe CLI\n")
-    click.echo("Type 'agentserve init <project_name> [--framework <framework>]' to start a new project.\n")
-    click.echo("Type 'agentserve add [--framework <framework>]' to add AgentServe to an existing project.\n")
-    click.echo("Available frameworks: openai, langchain, llama")
-    click.echo("Go to https://github.com/Props/agentserve for more information.\n")
+    click.echo("Welcome to AgentServe CLI\n\n")
+    click.echo("Go to https://github.com/Props/agentserve for more information.\n\n\n")
 
 @main.command()
 @click.argument('project_name')
@@ -93,7 +90,7 @@ def init(project_name, framework):
     # Handle agent example file based on chosen framework
     agent_template_filename = FRAMEWORKS[framework]['agent_template_filename']
     agent_src_path = TEMPLATES_DIR / "agents" /  agent_template_filename
-    agent_dst_path = project_path / agent_template_filename.replace('.tpl', '.py')
+    agent_dst_path = project_path / agent_template_filename[:-4] # Remove '.tpl' extension
     shutil.copyfile(agent_src_path, agent_dst_path)
 
     # Update requirements.txt
