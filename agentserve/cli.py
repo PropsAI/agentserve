@@ -104,6 +104,18 @@ def init(project_name, framework):
         elif framework == 'blank':
             pass
 
+    # Create .env file
+    env_path = project_path / '.env'
+    with open(env_path, 'w') as f:
+        if framework == 'openai':
+            f.write('OPENAI_API_KEY=<your-openai-api-key>\n')
+        elif framework == 'langchain':
+            f.write('OPENAI_API_KEY=<your-openai-api-key>\n')
+        elif framework == 'llamaindex':
+            f.write('OPENAI_API_KEY=<your-openai-api-key>\n')
+        elif framework == 'blank':
+            pass
+
     click.echo(f"Initialized new agent project at '{project_path}' with '{framework}' framework.")
 
 @main.command()

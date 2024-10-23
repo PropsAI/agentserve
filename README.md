@@ -30,14 +30,12 @@ pip install agentserve
 
 ## CLI Commands
 
-AgentServe provides a Command-Line Interface (CLI) tool to manage your AI agent projects. Below are the available commands and their usages.
+AgentServe provides a Command-Line Interface (CLI) tool to setup your AI agent projects. Below are the available commands and their usages.
 
 ```bash
 agentserve init <project_name> [--framework <framework>] # Initialize a new project
 agentserve setup # Add AgentServe to an existing project
 ```
-
-More detailed information about each command is provided below
 
 ## Getting Started
 
@@ -81,7 +79,16 @@ This command starts the API server and a Redis instance, allowing your agent to 
 
 The agent will be running on `http://localhost:8000/` and have the following endpoint:
 
+- `POST /task/sync` - Synchronously process a task
+- `POST /task/async` - Asynchronously process a task
+- `GET /task/status/:task_id` - Get the status of a task
+- `GET /task/result/:task_id` - Get the result of a task
 
+**Example:**
+
+```bash
+curl -X POST http://localhost:8000/task/sync -H "Content-Type: application/json" -d '{"prompt": "What is the capital of France?"}'
+```
 
 ## Example Project Structure
 
@@ -100,6 +107,49 @@ my_project/
 - **`Dockerfile` & `docker-compose.yml`**: Docker configurations for building and running the application.
 - **`example_openai_agent.py`**: An example agent tailored to the OpenAI framework.
 - **`requirements.txt`**: Lists Python dependencies.
+
+## API Reference
+
+### POST /task/sync
+
+Synchronously process a task.
+
+**Request Body:**
+
+- `task_data`: A dictionary containing the task data.
+
+**Response:**
+
+- `result`: The result of the task.
+
+### POST /task/async
+
+Asynchronously process a task.
+
+**Request Body:**
+
+- `task_data`: A dictionary containing the task data.
+
+**Response:**
+
+- `task_id`: The ID of the task.
+
+### GET /task/status/:task_id
+
+Get the status of a task.
+
+**Response:**
+
+- `status`: The status of the task.
+
+
+### GET /task/result/:task_id
+
+Get the result of a task.
+
+**Response:**
+
+- `result`: The result of the task.
 
 ## CLI Usage
 
@@ -129,15 +179,6 @@ agentserve setup
 
 - Adds AgentServe to the project and sets up the necessary files.
 - Note this command will not run if the project already included a main.py, Dockerfile or docker-compose.yml
-
-## Customization
-
-Depending on the chosen framework, you can customize the example agent to fit your specific needs:
-
-- **OpenAI**: Modify `example_openai_agent.py` to implement OpenAI-specific functionalities.
-- **LangChain**: Customize `example_langchain_agent.py` for LangChain integrations.
-- **Llama Index**: Adjust `example_llama_agent.py` for Llama Index operations.
-- **Blank**: Implement your own agent by creating a new class that inherits from the `Agent` class and implements the `process` method.
 
 ## License
 
