@@ -10,22 +10,22 @@ TEMPLATES_DIR = Path(__file__).parent / 'templates'
 # Mapping of framework choices to their respective agent import and class names
 FRAMEWORKS = {
     'openai': {
-        'agent_import': 'from agent.example_openai_agent import ExampleAgent',
+        'agent_import': 'from agents.example_openai_agent import ExampleAgent',
         'agent_class': 'ExampleAgent',
         'agent_template_filename': 'example_openai_agent.py.tpl'
     },
     'langchain': {
-        'agent_import': 'from agent.example_langchain_agent import ExampleAgent',
+        'agent_import': 'from agents.example_langchain_agent import ExampleAgent',
         'agent_class': 'ExampleAgent',
         'agent_template_filename': 'example_langchain_agent.py.tpl'
     },
     'llama': {
-        'agent_import': 'from agent.example_llama_agent import ExampleAgent',
+        'agent_import': 'from agents.example_llama_agent import ExampleAgent',
         'agent_class': 'ExampleAgent',
         'agent_template_filename': 'example_llamaindex_agent.py.tpl'
     },
     'blank': {
-        'agent_import': 'from agent.example_agent import ExampleAgent',
+        'agent_import': 'from agents.example_agent import ExampleAgent',
         'agent_class': 'ExampleAgent',
         'agent_template_filename': 'example_agent.py.tpl'
     }
@@ -75,8 +75,8 @@ def init(project_name, framework):
 
     # Copy agent template to agents directory
     agent_template_filename = FRAMEWORKS[framework]['agent_template_filename']
-    agent_src_path = TEMPLATES_DIR / 'agent' / agent_template_filename
-    agent_dst_path = project_path / 'agent' / agent_template_filename[:-4]  # Remove '.tpl' extension
+    agent_src_path = TEMPLATES_DIR / 'agents' / agent_template_filename
+    agent_dst_path = project_path / 'agents' / agent_template_filename[:-4]  # Remove '.tpl' extension
     shutil.copyfile(agent_src_path, agent_dst_path)
 
     # Copy .env template

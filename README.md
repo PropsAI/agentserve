@@ -111,7 +111,7 @@ After initializing a new project, your project directory will look like this:
 
 ```
 my_project/
-├── agent/
+├── agents/
 │   ├── example_agent.py
 ├── docker/
 │   ├── Dockerfile
@@ -224,10 +224,10 @@ This ensures that AgentServe will be installed when setting up the project in th
 
 #### 3. Create an agents Directory
 
-Create a new directory called agent in the root of your project. This is where your agent classes will reside.
+Create a new directory called agents in the root of your project. This is where your agent classes will reside.
 
 ```bash
-mkdir agent
+mkdir agents
 ```
 
 #### 4. Implement Your Agent Class
@@ -235,13 +235,13 @@ mkdir agent
 Inside the  directory, create a new Python file for your agent. For example, my_agent.py:
 
 ```bash
-touch agent/my_agent.py
+touch agents/my_agent.py
 ```
 
 Open agent/my_agent.py and implement your agent by subclassing Agent from agentserve:
 
 ```python
-# agent/my_agent.py
+# agents/my_agent.py
 from agentserve import Agent
 
 class MyAgent(Agent):
@@ -267,7 +267,7 @@ Open main.py and set up the AgentServer:
 
 ```python
 from agentserve import AgentServer
-from agent.my_agent import MyAgent
+from agents.my_agent import MyAgent
 
 agent_server = AgentServer(MyAgent)
 app = agent_server.app
