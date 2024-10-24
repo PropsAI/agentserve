@@ -6,10 +6,14 @@
      /___/
 ```
 
-# AgentServe SDK
+# AgentServe
 
+[![GitHub](https://img.shields.io/badge/GitHub-View_on_GitHub-blue?style=flat&logo=GitHub)](https://github.com/PropsAI/agentserve)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 ![PyPI Version](https://img.shields.io/pypi/v/agentserve.svg)
+![CI Status](https://img.shields.io/github/workflow/status/PropsAI/agentserve/CI)
+![GitHub Stars](https://img.shields.io/github/stars/PropsAI/agentserve?style=social)
+
 
 AgentServe is an SDK & CLI for hosting and managing AI agents. It provides a simple interface to wrap your agent in a FastAPI server with a Redis queue to maintain tasks. The output is a single docker image that you can deploy anywhere.
 
