@@ -51,27 +51,11 @@ agentserve run # Run the API server and worker
 
 ## Getting Started
 
-First we need to set up agentserve in our project. We can do this by running the `init` command to create a new project or by running the `setup` command to add AgentServe to an existing project.
+First we need to set up agentserve in our project. We can do this by running the `init` command to create a new project.
 
 ### Initialize a New Project
 
-Create a new AgentServe project with a specified agent framework.
-
-**Command:**
-
-```bash
-agentserve init <project_name> [--framework <framework>]
-```
-
-**Options:**
-
-- `--framework`: (Optional) Specify the type of agent framework to use. Available options:
-  - `openai` (default)
-  - `langchain`
-  - `llamaindex`
-  - `blank`
-
-**Example:**
+Create a new AgentServe project with a specified agent framework (this will default to OpenAI, see [CLI Usage](#cli-usage) for more details).
 
 ```bash
 agentserve init my_project
@@ -182,6 +166,20 @@ Get the result of a task.
 ### Init Command (for new projects)
 
 To create a new project with AgentServe:
+
+```bash
+agentserve init <project_name> [--framework <framework>]
+```
+
+**Options:**
+
+- `--framework`: (Optional) Specify the type of agent framework to use. Available options:
+  - `openai` (default)
+  - `langchain`
+  - `llamaindex`
+  - `blank`
+
+**Example:**
 
 ```bash
 agentserve init my_new_project --framework openai
