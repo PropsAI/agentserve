@@ -15,7 +15,7 @@ services:
     environment:
       - REDIS_HOST=redis
     env_file:
-      - .env
+      - ../.env
     depends_on:
       - redis
     ports:
@@ -28,6 +28,8 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    env_file:
+      - ../.env
     depends_on:
       - redis
     restart: always
