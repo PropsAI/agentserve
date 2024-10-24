@@ -1,9 +1,9 @@
 ```
-   ___                __  ____                
-  / _ |___ ____ ___  / /_/ __/__ _____  _____ 
+   ___                __  ____
+  / _ |___ ____ ___  / /_/ __/__ _____  _____
  / __ / _ `/ -_) _ \/ __/\ \/ -_) __/ |/ / -_)
-/_/ |_\_, /\__/_//_/\__/___/\__/_/  |___/\__/ 
-     /___/                                    
+/_/ |_\_, /\__/_//_/\__/___/\__/_/  |___/\__/
+     /___/
 ```
 
 # AgentServe SDK
@@ -42,7 +42,8 @@ AgentServe provides a Command-Line Interface (CLI) tool to setup your AI agent p
 
 ```bash
 agentserve init <project_name> [--framework <framework>] # Initialize a new project
-agentserve setup # Add AgentServe to an existing project
+agentserve build # Generate Dockerfiles
+agentserve run # Run the API server and worker
 ```
 
 ## Getting Started
@@ -54,6 +55,7 @@ First we need to set up agentserve in our project. We can do this by running the
 Create a new AgentServe project with a specified agent framework.
 
 **Command:**
+
 ```bash
 agentserve init <project_name> [--framework <framework>]
 ```
@@ -67,6 +69,7 @@ agentserve init <project_name> [--framework <framework>]
   - `blank`
 
 **Example:**
+
 ```bash
 agentserve init my_project --framework openai
 ```
@@ -81,9 +84,9 @@ You can update the environment variables in the `.env` file to add your OpenAI A
 
 Use Docker Compose to build and run the server:
 
-   ```bash
-   docker-compose up --build
-   ```
+```bash
+docker-compose up --build
+```
 
 This command starts the API server and a Redis instance, allowing your agent to process tasks.
 
@@ -108,16 +111,19 @@ After initializing a new project, your project directory will look like this:
 
 ```
 my_project/
-├── Dockerfile
-├── docker-compose.yml
+├── agent/
+│   ├── example_agent.py
+├── docker/
+│   ├── Dockerfile
+│   ├── docker-compose.yml
 ├── main.py
-├── example_agent.py
 ├── requirements.txt
+├── .env
 ```
 
 - **`main.py`**: The main application file where the agent server is configured.
 - **`Dockerfile` & `docker-compose.yml`**: Docker configurations for building and running the application.
-- **`example_openai_agent.py`**: An example agent tailored to the OpenAI framework.
+- **`example_agent.py`**: An example agent tailored to the OpenAI framework.
 - **`requirements.txt`**: Lists Python dependencies.
 
 ## API Reference
@@ -154,7 +160,6 @@ Get the status of a task.
 
 - `status`: The status of the task.
 
-
 ### GET /task/result/:task_id
 
 Get the result of a task.
@@ -179,18 +184,101 @@ agentserve init my_new_project --framework openai
 - Populates it with necessary AgentServe files tailored to the OpenAI framework.
 - Sets up `requirements.txt` with necessary dependencies.
 
-### Setup Command (for existing projects)
-
-Navigate to your existing project directory and run:
+### Build Command
 
 ```bash
-agentserve setup
+agentserve build
 ```
 
-**Result:**
+### Run Command
 
-- Adds AgentServe to the project and sets up the necessary files.
-- Note this command will not run if the project already included a main.py, Dockerfile or docker-compose.yml
+```bash
+agentserve run
+```
+
+## Adding AgentServe to an Existing Project
+
+This guide provides step-by-step instructions to manually integrate AgentServe into your existing Python application. By following these steps, you can add AI agent capabilities to your project without using the AgentServe CLI.
+
+### Steps to Integrate AgentServe
+
+#### 1. Install AgentServe
+
+First, install the agentserve package using pip:
+
+```bash
+pip install agentserve
+```
+
+If you're using a virtual environment, make sure it is activated before running the command.
+
+#### 2. Update Your requirements.txt
+
+If your project uses a requirements.txt file, add agentserve to it:
+
+```
+agentserve
+```
+
+This ensures that AgentServe will be installed when setting up the project in the future.
+
+#### 3. Create an agents Directory
+
+Create a new directory called agent in the root of your project. This is where your agent classes will reside.
+
+```bash
+mkdir agent
+```
+
+#### 4. Implement Your Agent Class
+
+Inside the  directory, create a new Python file for your agent. For example, my_agent.py:
+
+```bash
+touch agent/my_agent.py
+```
+
+Open agent/my_agent.py and implement your agent by subclassing Agent from agentserve:
+
+```python
+# agent/my_agent.py
+from agentserve import Agent
+
+class MyAgent(Agent):
+    def process(self, task_data):
+        # Implement your agent's logic here
+        client = OpenAI()
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "system", "content": "You are a helpful assistant."}, {"role": "user", "content": task_data}]
+        )
+        return response.choices[0].message.content
+```
+
+#### 5. Create or Update Your main.py
+
+In the root of your project, create a main.py file if it doesn't already exist:
+
+```bash
+touch main.py
+```
+
+Open main.py and set up the AgentServer:
+
+```python
+from agentserve import AgentServer
+from agent.my_agent import MyAgent
+
+agent_server = AgentServer(MyAgent)
+app = agent_server.app
+```
+
+#### 6. Build and Run the Server
+
+```bash
+agentserve build
+agentserve run
+```
 
 ## License
 
