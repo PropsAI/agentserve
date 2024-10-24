@@ -2,6 +2,11 @@
 
 FROM python:3.9-slim
 
+# Environment variables to prevent Python from writing pyc files and buffering stdout/stderr
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app  # Ensure Python can find the agentserve package
+
 WORKDIR /app
 
 COPY requirements.txt .

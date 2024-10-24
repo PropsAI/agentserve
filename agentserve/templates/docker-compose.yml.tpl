@@ -27,6 +27,7 @@ services:
     command: python -m agentserve.worker
     environment:
       - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
       - redis
     restart: always

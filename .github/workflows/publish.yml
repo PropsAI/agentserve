@@ -1,0 +1,40 @@
+name: Upload Python Package to PYPI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install setuptools setuptools_scm wheel twine
+
+    - name: Build
+      run: python setup.py sdist bdist_wheel
+
+    - name: Publish to PyPI
+      env:
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}
+      run: twine upload dist/*
+
+    - name: Cleanup
+      run: rm -rf dist build *.egg-info

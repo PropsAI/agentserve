@@ -119,7 +119,9 @@ def init(project_name, framework):
             pass
 
     click.echo(f"Initialized new agent project at '{project_path}' with '{framework}' framework.")
-    click.echo("Now run 'cd {project_name}' and then 'agentserve run' to start the API server and worker.")
+    click.echo("    - Now run 'cd {project_name}'")
+    click.echo("    - Update the .env file with your API keys and other environment variables")
+    click.echo("    - Then run 'agentserve run' to start the API server and worker.")
 
 @main.command()
 def setup():

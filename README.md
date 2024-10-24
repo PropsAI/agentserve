@@ -1,7 +1,15 @@
 <!-- IMAGE -->
 
+   ___                __  ____                
+  / _ |___ ____ ___  / /_/ __/__ _____  _____ 
+ / __ / _ `/ -_) _ \/ __/\ \/ -_) __/ |/ / -_)
+/_/ |_\_, /\__/_//_/\__/___/\__/_/  |___/\__/ 
+     /___/                                    
 
 # AgentServe SDK
+
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+![PyPI Version](https://img.shields.io/pypi/v/agentserve.svg)
 
 AgentServe is an SDK & CLI for hosting and managing AI agents. It provides a simple interface to wrap your agent in a FastAPI server with a Redis queue to maintain tasks. The output is a single docker image that you can deploy anywhere.
 
@@ -64,6 +72,10 @@ agentserve init my_project --framework openai
 ```
 
 This command adds AgentServe to the current project using the OpenAI framework.
+
+### Update Environment Variables
+
+You can update the environment variables in the `.env` file to add your OpenAI API key, or any other variables you need.
 
 ### Run the Server
 
