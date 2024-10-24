@@ -12,6 +12,7 @@ services:
   api_server:
     build:
       context: ..
+      dockerfile: docker/Dockerfile
     command: uvicorn main:app --host 0.0.0.0 --port 5618
     environment:
       - REDIS_HOST=redis
@@ -26,6 +27,7 @@ services:
   worker:
     build:
       context: ..
+      dockerfile: docker/Dockerfile
     command: python -m agentserve.worker
     environment:
       - REDIS_HOST=redis
