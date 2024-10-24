@@ -71,21 +71,27 @@ agentserve init <project_name> [--framework <framework>]
 **Example:**
 
 ```bash
-agentserve init my_project --framework openai
+agentserve init my_project
 ```
 
 This command adds AgentServe to the current project using the OpenAI framework.
 
 ### Update Environment Variables
 
-You can update the environment variables in the `.env` file to add your OpenAI API key, or any other variables you need.
+You can update the environment variables in the `.env` file to add your OpenAI API key.
+
+### Build the Docker Image
+
+```bash
+agentserve build
+```
 
 ### Run the Server
 
 Use Docker Compose to build and run the server:
 
 ```bash
-docker-compose up --build
+agentserve run
 ```
 
 This command starts the API server and a Redis instance, allowing your agent to process tasks.
