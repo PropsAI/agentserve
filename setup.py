@@ -4,7 +4,6 @@ from setuptools import setup, find_packages
 
 setup(
     name='agentserve',
-    version='auto',
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
     packages=find_packages(),
