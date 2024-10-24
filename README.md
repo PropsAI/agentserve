@@ -33,7 +33,7 @@ The goal of AgentServe is to provide the easiest way to take an local agent to p
 To install the AgentServe SDK, you can use pip:
 
 ```bash
-pip install agentserve
+pip install -U agentserve
 ```
 
 ## CLI Commands
