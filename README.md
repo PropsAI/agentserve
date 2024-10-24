@@ -11,7 +11,6 @@
 [![GitHub](https://img.shields.io/badge/GitHub-View_on_GitHub-blue?style=flat&logo=GitHub)](https://github.com/PropsAI/agentserve)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 ![PyPI Version](https://img.shields.io/pypi/v/agentserve.svg)
-![CI Status](https://img.shields.io/github/workflow/status/PropsAI/agentserve/CI)
 ![GitHub Stars](https://img.shields.io/github/stars/PropsAI/agentserve?style=social)
 
 
@@ -102,7 +101,7 @@ This command starts the API server and a Redis instance, allowing your agent to 
 
 ### Test the Agent
 
-The agent will be running on `http://localhost:8000/` and have the following endpoint:
+The agent will be running on `http://localhost:5618/` and have the following endpoint:
 
 - `POST /task/sync` - Synchronously process a task
 - `POST /task/async` - Asynchronously process a task
@@ -112,7 +111,7 @@ The agent will be running on `http://localhost:8000/` and have the following end
 **Example:**
 
 ```bash
-curl -X POST http://localhost:8000/task/sync -H "Content-Type: application/json" -d '{"prompt": "What is the capital of France?"}'
+curl -X POST http://localhost:5618/task/sync -H "Content-Type: application/json" -d '{"prompt": "What is the capital of France?"}'
 ```
 
 ## Example Project Structure
