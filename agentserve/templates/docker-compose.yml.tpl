@@ -10,7 +10,8 @@ services:
     restart: always
 
   api_server:
-    build: .
+    build:
+      context: ..
     command: uvicorn main:app --host 0.0.0.0 --port 5618
     environment:
       - REDIS_HOST=redis
@@ -23,7 +24,8 @@ services:
     restart: always
 
   worker:
-    build: .
+    build:
+      context: ..
     command: python -m agentserve.worker
     environment:
       - REDIS_HOST=redis
