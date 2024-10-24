@@ -50,7 +50,7 @@ def init(project_name, framework):
         return
 
     # Define the list of target directories to be created
-    target_dirs = ['agent'] 
+    target_dirs = ['agents'] 
 
     # Create project directory
     project_path.mkdir()
