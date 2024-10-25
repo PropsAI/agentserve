@@ -22,6 +22,15 @@ class AgentServer:
                 result = self.agent._process(task_data)
                 return {"result": result}
             except ValueError as ve:
+                # Check if this is a Pydantic validation error
+                if hasattr(ve, 'errors'):
+                    raise HTTPException(
+                        status_code=400,
+                        detail={
+                            "message": "Validation error",
+                            "errors": ve.errors()
+                        }
+                    )
                 raise HTTPException(status_code=400, detail=str(ve))
             except Exception as e:
                 raise HTTPException(status_code=500, detail=str(e))
@@ -47,7 +56,19 @@ class AgentServer:
                 if job.is_finished:
                     return {"result": job.result}
                 elif job.is_failed:
-                    return {"status": "failed", "error": str(job.exc_info)}
+                    # Extract the error information
+                    exc_info = job.exc_info
+                    if isinstance(exc_info, ValueError):
+                        # Check if this was a Pydantic validation error
+                        if hasattr(exc_info, 'errors'):
+                            return {
+                                "status": "failed",
+                                "error": {
+                                    "message": "Validation error",
+                                    "errors": exc_info.errors()
+                                }
+                            }
+                    return {"status": "failed", "error": str(exc_info)}
                 else:
                     return {"status": job.get_status()}
             else:
