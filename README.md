@@ -287,6 +287,17 @@ agentserve build
 agentserve run
 ```
 
+## Hosting
+
+INSTRUCTIONS COMING SOON
+
+## ROADMAP
+
+- [ ] Add support for streaming responses
+- [ ] Add easy instructions for more hosting options (GCP, Azure, AWS, etc.)
+- [ ] Add support for multi model agents
+- [ ] Add support for more agent frameworks
+
 ## License
 
 This project is licensed under the MIT License.
