@@ -1,7 +1,12 @@
-from agentserve import Agent
+from agentserve import Agent, AgentInput
 from openai import OpenAI
 
+class ExampleInput(AgentInput):
+    prompt: str
+
 class ExampleAgent(Agent):
+    input_schema = ExampleInput
+    
     def process(self, task_data):
         client = OpenAI()
         response = client.chat.completions.create(

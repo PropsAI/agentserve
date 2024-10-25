@@ -1,10 +1,9 @@
 # agentserve/agent_server.py
 
 from fastapi import FastAPI, HTTPException
-from typing import Dict, Any, AsyncGenerator
+from typing import Dict, Any
 from rq import Queue
 from redis import Redis
-from fastapi.responses import StreamingResponse
 import uuid
 import os
 
@@ -20,15 +19,17 @@ class AgentServer:
         @self.app.post("/task/sync")
         async def sync_task(task_data: Dict[str, Any]):
             try:
-                result = self.agent.process(task_data)
+                result = self.agent._process(task_data)
                 return {"result": result}
+            except ValueError as ve:
+                raise HTTPException(status_code=400, detail=str(ve))
             except Exception as e:
                 raise HTTPException(status_code=500, detail=str(e))
 
         @self.app.post("/task/async")
         async def async_task(task_data: Dict[str, Any]):
             task_id = str(uuid.uuid4())
-            job = self.task_queue.enqueue(self.agent.process, task_data, job_id=task_id)
+            job = self.task_queue.enqueue(self.agent._process, task_data, job_id=task_id)
             return {"task_id": task_id}
 
         @self.app.get("/task/status/{task_id}")

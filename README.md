@@ -26,6 +26,7 @@ The goal of AgentServe is to provide the easiest way to take an local agent to p
 - **Framework Agnostic:** AgentServe supports multiple agent frameworks (OpenAI, LangChain, LlamaIndex, and Blank).
 - **Dockerized:** The output is a single docker image that you can deploy anywhere.
 - **Easy to Use:** AgentServe provides a CLI tool to initialize and setup your AI agent projects.
+- **Schema Validation:** Define input schemas for your agents using AgentInput to ensure data consistency and validation.
 
 ## Requirements
 
@@ -160,6 +161,86 @@ Get the result of a task.
 **Response:**
 
 - `result`: The result of the task.
+
+## Defining Input Schemas
+
+AgentServe uses AgentInput (an alias for Pydantic's BaseModel) to define and validate the input schemas for your agents. This ensures that the data received by your agents adheres to the expected structure, enhancing reliability and developer experience.
+### Subclassing AgentInput
+To define a custom input schema for your agent, subclass AgentInput and specify the required fields.
+
+**Example:**
+
+```python
+# agents/custom_agent.py
+from agentserve.agent import Agent, AgentInput
+from typing import Optional, Dict, Any
+
+class CustomTaskSchema(AgentInput):
+    input_text: str
+    parameters: Optional[Dict[str, Any]] = None
+
+class CustomAgent(Agent):
+    input_schema = CustomTaskSchema
+
+    def process(self, task_data: Dict[str, Any]) -> Dict[str, Any]:
+        # Implement your processing logic here
+        input_text = task_data["input_text"]
+        parameters = task_data.get("parameters", {})
+        # Example processing
+        processed_text = input_text.upper()  # Simple example
+        return {"processed_text": processed_text, "parameters": parameters}
+```
+
+### Updating Your Agent
+
+When creating your agent, assign your custom schema to the input_schema attribute. This ensures that all incoming task_data is validated against your defined schema before processing.
+
+**Steps:**
+
+1. Define the Input Schema:
+
+    ```python
+    from agentserve.agent import Agent, AgentInput
+    from typing import Optional, Dict, Any
+
+    class MyTaskSchema(AgentInput):
+        prompt: str
+        settings: Optional[Dict[str, Any]] = None
+    ```
+
+2. Implement the Agent:
+
+    ```python
+    class MyAgent(Agent):
+        input_schema = MyTaskSchema
+
+        def process(self, task_data: Dict[str, Any]) -> Dict[str, Any]:
+            prompt = task_data["prompt"]
+            settings = task_data.get("settings", {})
+            # Your processing logic here
+            response = {"response": f"Echo: {prompt}", "settings": settings}
+            return response
+    ```
+
+### Handling Validation Errors
+
+AgentServe will automatically validate incoming task_data against the defined input_schema. If the data does not conform to the schema, a 400 Bad Request error will be returned with details about the validation failure.
+
+**Example Response:**
+
+```json
+{
+  "detail": [
+    {
+      "loc": ["body", "prompt"],
+      "msg": "field required",
+      "type": "value_error.missing"
+    }
+  ]
+}   
+```
+
+Ensure that your clients provide data that matches the schema to avoid validation errors.
 
 ## CLI Usage
 

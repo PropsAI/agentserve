@@ -1,8 +1,13 @@
-from agentserve import Agent
+from agentserve import Agent, AgentInput
 from llama_index import GPTSimpleVectorIndex, SimpleDirectoryReader
 import os
 
+class ExampleInput(AgentInput):
+    query: str
+
 class ExampleAgent(Agent):
+    input_schema = ExampleInput
+    
     def process(self, task_data):
         # Load documents from a directory
         documents = SimpleDirectoryReader('data').load_data()

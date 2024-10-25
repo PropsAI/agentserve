@@ -1,7 +1,12 @@
-from agentserve import Agent
+from agentserve import Agent, AgentInput
 from langchain import OpenAI
 
+class ExampleInput(AgentInput):
+    prompt: str
+
 class ExampleAgent(Agent):
+    input_schema = ExampleInput
+    
     def __init__(self):
         self.client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
