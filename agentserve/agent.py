@@ -10,7 +10,7 @@ class Agent:
     def _process(self, task_data: Dict[str, Any]) -> Dict[str, Any]:
         # Validate task_data against input_schema
         validated_data = self.input_schema(**task_data).dict()
-        return self._process(validated_data)
+        return self.process(validated_data)
     
     def process(self, task_data: Dict[str, Any]) -> Dict[str, Any]:
         """
