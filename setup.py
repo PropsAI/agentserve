@@ -13,7 +13,8 @@ setup(
         'uvicorn',
         'rq',
         'redis',
-        'click'
+        'click',
+        'pydantic'
     ],
     entry_points={
         'console_scripts': [
