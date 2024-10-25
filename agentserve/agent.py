@@ -2,7 +2,9 @@
 from typing import Dict, Any, Type
 from pydantic import BaseModel
 
-AgentInput = BaseModel  # Alias BaseModel to AgentInput
+class AgentInput(BaseModel):
+    """Base class for defining agent input schemas. This is just an alias for BaseModel."""
+    pass
 
 class Agent:
     input_schema: Type[AgentInput] = AgentInput
