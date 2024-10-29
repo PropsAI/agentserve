@@ -12,6 +12,7 @@
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 ![PyPI Version](https://img.shields.io/pypi/v/agentserve.svg)
 ![GitHub Stars](https://img.shields.io/github/stars/PropsAI/agentserve?style=social)
+![Beta](https://img.shields.io/badge/Status-Beta-yellow)
 
 
 AgentServe is an lightweight framework for hosting and scaling AI agents. It is designed to be easy to use and integrate with existing projects and agent / LLM frameworks. It wraps your agent in a REST API and supports optional task queuing for scalability.
@@ -34,7 +35,7 @@ The goal of AgentServe is to provide the easiest way to take an local agent to p
 
 ## Installation
 
-To install the AgentServe SDK, you can use pip:
+To install AgentServe, you can use pip:
 
 ```bash
 pip install -U agentserve
