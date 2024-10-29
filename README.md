@@ -44,7 +44,7 @@ pip install -U agentserve
 
 AgentServe allows you to easily wrap your agent code in a FastAPI application and expose it via REST endpoints. Below are the steps to integrate AgentServe into your project.
 
-### 1.Install AgentServe
+### 1. Install AgentServe
 
 First, install the `agentserve` package using pip:
 
@@ -57,7 +57,7 @@ Make sure your virtual environment is activated if you're using one.
 
 ### 2. Create or Update Your Agent
 
-Within your entry point file (e.g. `main.py`), create an agent function that will be used to process tasks.
+Within your entry point file (e.g. `main.py`) we will import `agentserve` and create an app instance, then decorate an agent function with `@app.agent`. Finally, we will call `app.run()` to start the server.
 
 The agent function should take a single argument, `task_data`, which will be a dictionary of data prequired by your agent.
 
@@ -66,6 +66,7 @@ The agent function should take a single argument, `task_data`, which will be a d
 ```python
 # main.py
 import agentserve
+from openai import OpenAI
 
 app = agentserve.app()
 
@@ -84,7 +85,7 @@ if __name__ == "__main__":
 ```
 
 In this example:
-- We import agentserve and create an app instance using agentserve.app().
+- We import agentserve and create an app instance using `agentserve.app()`.
 - We define our agent function `my_agent` and decorate it with `@app.agent`.
 - Within the agent function, we implement our agent's logic.
 - We call `app.run()` to start the server.
@@ -249,6 +250,7 @@ INSTRUCTIONS COMING SOON
 
 - [ ] Add support for streaming responses
 - [ ] Add easy instructions for more hosting options (GCP, Azure, AWS, etc.)
+- [ ] Add support for external storage for task results
 - [ ] Add support for multi model agents
 - [ ] Add support for more agent frameworks
 
