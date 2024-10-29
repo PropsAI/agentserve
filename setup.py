@@ -23,12 +23,9 @@ setup(
             'agentserve=agentserve.cli:main',
         ],
     },
-    package_data={
-        'agentserve': ['templates/*']
-    },
     author='Peter',
     author_email='peter@getprops.ai',
-    description='An SDK for hosting and managing AI agents.',
+    description='A framework for hosting and scaling AI agents.',
     url='https://github.com/PropsAI/agentserve',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
