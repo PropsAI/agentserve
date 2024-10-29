@@ -14,7 +14,7 @@
 ![GitHub Stars](https://img.shields.io/github/stars/PropsAI/agentserve?style=social)
 
 
-AgentServe is an SDK & CLI for hosting and managing AI agents. It provides a simple interface to wrap your agent in a FastAPI server with a Redis queue to maintain tasks. The output is a single docker image that you can deploy anywhere.
+AgentServe is an lightweight framework for hosting and scaling AI agents. It is designed to be easy to use and integrate with existing projects and agent / LLM frameworks. It wraps your agent in a REST API and supports optional task queuing for scalability.
 
 ## Goals and Objectives
 
@@ -24,9 +24,9 @@ The goal of AgentServe is to provide the easiest way to take an local agent to p
 
 - **Standardized:** AgentServe provides a standardized way to communicate with AI agents via a REST API.
 - **Framework Agnostic:** AgentServe supports multiple agent frameworks (OpenAI, LangChain, LlamaIndex, and Blank).
-- **Dockerized:** The output is a single docker image that you can deploy anywhere.
-- **Easy to Use:** AgentServe provides a CLI tool to initialize and setup your AI agent projects.
-- **Schema Validation:** Define input schemas for your agents using AgentInput to ensure data consistency and validation.
+- **Task Queuing:** AgentServe supports optional task queuing for scalability. Choose between local, Redis, or Celery task queues based on your needs.
+- **Configurable:** AgentServe is designed to be configurable via an `agentserve.yaml` file and overridable with environment variables.
+- **Easy to Use:** AgentServe aims to be easy to use and integrate with existing projects and make deployment as simple as possible.
 
 ## Requirements
 
@@ -40,332 +40,206 @@ To install the AgentServe SDK, you can use pip:
 pip install -U agentserve
 ```
 
-## CLI Commands
-
-AgentServe provides a Command-Line Interface (CLI) tool to setup your AI agent projects. Below are the available commands and their usages.
-
-```bash
-agentserve init <project_name> [--framework <framework>] # Initialize a new project
-agentserve build # Generate Dockerfiles
-agentserve run # Run the API server and worker
-```
-
 ## Getting Started
 
-First we need to set up agentserve in our project. We can do this by running the `init` command to create a new project.
+AgentServe allows you to easily wrap your agent code in a FastAPI application and expose it via REST endpoints. Below are the steps to integrate AgentServe into your project.
 
-### Initialize a New Project
+### 1. Install AgentServe
 
-Create a new AgentServe project with a specified agent framework (this will default to OpenAI, see [CLI Usage](#cli-usage) for more details).
-
-```bash
-agentserve init my_project
-```
-
-This command adds AgentServe to the current project using the OpenAI framework.
-
-### Update Environment Variables
-
-You can update the environment variables in the `.env` file to add your OpenAI API key.
-
-### Build the Docker Image
+First, install the `agentserve` package using pip:
 
 ```bash
-agentserve build
+pip install -U agentserve
 ```
 
-### Run the Server
+Make sure your virtual environment is activated if you're using one.
 
-Use Docker Compose to build and run the server:
 
-```bash
-agentserve run
-```
+### 2. Create or Update Your Agent
 
-This command starts the API server and a Redis instance, allowing your agent to process tasks.
+Within your entry point file (e.g. `main.py`) we will import `agentserve` and create an app instance, then decorate an agent function with `@app.agent`. Finally, we will call `app.run()` to start the server.
 
-### Test the Agent
-
-The agent will be running on `http://localhost:5618/` and have the following endpoint:
-
-- `POST /task/sync` - Synchronously process a task
-- `POST /task/async` - Asynchronously process a task
-- `GET /task/status/:task_id` - Get the status of a task
-- `GET /task/result/:task_id` - Get the result of a task
-
-**Example:**
-
-```bash
-curl -X POST http://localhost:5618/task/sync -H "Content-Type: application/json" -d '{"prompt": "What is the capital of France?"}'
-```
-
-## Example Project Structure
-
-After initializing a new project, your project directory will look like this:
-
-```
-my_project/
-├── agents/
-│   ├── example_agent.py
-├── docker/
-│   ├── Dockerfile
-│   ├── docker-compose.yml
-├── main.py
-├── requirements.txt
-├── .env
-```
-
-- **`main.py`**: The main application file where the agent server is configured.
-- **`Dockerfile` & `docker-compose.yml`**: Docker configurations for building and running the application.
-- **`example_agent.py`**: An example agent tailored to the OpenAI framework.
-- **`requirements.txt`**: Lists Python dependencies.
-
-## API Reference
-
-### POST /task/sync
-
-Synchronously process a task.
-
-**Request Body:**
-
-- `task_data`: A dictionary containing the task data.
-
-**Response:**
-
-- `result`: The result of the task.
-
-### POST /task/async
-
-Asynchronously process a task.
-
-**Request Body:**
-
-- `task_data`: A dictionary containing the task data.
-
-**Response:**
-
-- `task_id`: The ID of the task.
-
-### GET /task/status/:task_id
-
-Get the status of a task.
-
-**Response:**
-
-- `status`: The status of the task.
-
-### GET /task/result/:task_id
-
-Get the result of a task.
-
-**Response:**
-
-- `result`: The result of the task.
-
-## Defining Input Schemas
-
-AgentServe uses AgentInput (an alias for Pydantic's BaseModel) to define and validate the input schemas for your agents. This ensures that the data received by your agents adheres to the expected structure, enhancing reliability and developer experience.
-### Subclassing AgentInput
-To define a custom input schema for your agent, subclass AgentInput and specify the required fields.
+The agent function should take a single argument, `task_data`, which will be a dictionary of data prequired by your agent.
 
 **Example:**
 
 ```python
-# agents/custom_agent.py
-from agentserve.agent import Agent, AgentInput
-from typing import Optional, Dict, Any
+# main.py
+import agentserve
+from openai import OpenAI
 
-class CustomTaskSchema(AgentInput):
-    input_text: str
-    parameters: Optional[Dict[str, Any]] = None
+app = agentserve.app()
 
-class CustomAgent(Agent):
-    input_schema = CustomTaskSchema
+@app.agent
+def my_agent(task_data):
+    # Your agent logic goes here
+    client = OpenAI()
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": task_data["prompt"]}]
+    )
+    return response.choices[0].message.content
 
-    def process(self, task_data: Dict[str, Any]) -> Dict[str, Any]:
-        # Implement your processing logic here
-        input_text = task_data["input_text"]
-        parameters = task_data.get("parameters", {})
-        # Example processing
-        processed_text = input_text.upper()  # Simple example
-        return {"processed_text": processed_text, "parameters": parameters}
+if __name__ == "__main__":
+    app.run()
 ```
 
-### Updating Your Agent
+In this example:
+- We import agentserve and create an app instance using `agentserve.app()`.
+- We define our agent function `my_agent` and decorate it with `@app.agent`.
+- Within the agent function, we implement our agent's logic.
+- We call `app.run()` to start the server.
 
-When creating your agent, assign your custom schema to the input_schema attribute. This ensures that all incoming task_data is validated against your defined schema before processing.
+### 3. Run the Agent Server
 
-**Steps:**
-
-1. Define the Input Schema:
-
-    ```python
-    from agentserve.agent import Agent, AgentInput
-    from typing import Optional, Dict, Any
-
-    class MyTaskSchema(AgentInput):
-        prompt: str
-        settings: Optional[Dict[str, Any]] = None
-    ```
-
-2. Implement the Agent:
-
-    ```python
-    class MyAgent(Agent):
-        input_schema = MyTaskSchema
-
-        def process(self, task_data: Dict[str, Any]) -> Dict[str, Any]:
-            prompt = task_data["prompt"]
-            settings = task_data.get("settings", {})
-            # Your processing logic here
-            response = {"response": f"Echo: {prompt}", "settings": settings}
-            return response
-    ```
-
-### Handling Validation Errors
-
-AgentServe will automatically validate incoming task_data against the defined input_schema. If the data does not conform to the schema, a 400 Bad Request error will be returned with details about the validation failure.
-
-**Example Response:**
-
-```json
-{
-  "detail": [
-    {
-      "loc": ["body", "prompt"],
-      "msg": "field required",
-      "type": "value_error.missing"
-    }
-  ]
-}   
-```
-
-Ensure that your clients provide data that matches the schema to avoid validation errors.
-
-## CLI Usage
-
-### Init Command (for new projects)
-
-To create a new project with AgentServe:
+To run the agent server, use the following command:
 
 ```bash
-agentserve init <project_name> [--framework <framework>]
+python main.py
 ```
 
-**Options:**
+### 4. Configure Task Queue (Optional)
 
-- `--framework`: (Optional) Specify the type of agent framework to use. Available options:
-  - `openai` (default)
-  - `langchain`
-  - `llamaindex`
-  - `blank`
+By default, AgentServe uses a local task queue, which is suitable for development and testing. If you need more robust queue management for production, you can configure AgentServe to use Redis or Celery.
+
+**Using a Configuration File**
+Create a file named agentserve.yaml in your project directory:
+
+```yaml
+# agentserve.yaml
+
+task_queue: celery  # Options: 'local', 'redis', 'celery'
+
+celery:
+  broker_url: pyamqp://guest@localhost//
+```
+
+**Using Environment Variables**
+
+Alternatively, you can set configuration options using environment variables:
+
+```bash
+export AGENTSERVE_TASK_QUEUE=celery
+export AGENTSERVE_CELERY_BROKER_URL=pyamqp://guest@localhost//
+```
+
+### 5. Start the Worker (if using Celery or Redis)
+
+To start the worker, use the following command:
+
+```bash
+agentserve startworker
+```
+
+### 6. Test the Agent
+
+With the server and worker (if needed) running, you can test your agent using the available endpoints.
+
+**Synchronous Task Processing**
+
+`POST /task/sync`
+
+```bash
+curl -X POST http://localhost:8000/task/sync \
+     -H "Content-Type: application/json" \
+       -d '{"input": "Test input"}'
+```
+**Asynchronously process a task**
+
+`POST /task/async`
+
+```bash
+curl -X POST http://localhost:8000/task/async \
+     -H "Content-Type: application/json" \
+       -d '{"input": "Test input"}'
+```
+
+**Get the status of a task**
+
+`GET /task/status/:task_id`
+
+```bash
+curl http://localhost:8000/task/status/1234567890
+```
+
+**Get the result of a task**
+
+`GET /task/result/:task_id`
+
+```bash
+curl http://localhost:8000/task/result/1234567890
+```
+
+## Configuration Options
+
+AgentServe allows you to configure various aspects of the application using a configuration file or environment variables.
+
+#### Using agentserve.yaml 
+
+Place an `agentserve.yaml` file in your project directory with the desired configurations.
+
+**Example:**
+
+```yaml
+# agentserve.yaml
+
+task_queue: celery  # Options: 'local', 'redis', 'celery'
+
+celery:
+  broker_url: pyamqp://guest@localhost//
+
+redis:
+  host: localhost
+  port: 6379
+
+server:
+  host: 0.0.0.0
+  port: 8000
+```
+
+#### Using Environment Variables
+
+Set the desired configuration options using environment variables.
+
+You can override configurations using environment variables without modifying the configuration file.
+
+`AGENTSERVE_TASK_QUEUE`
+`AGENTSERVE_CELERY_BROKER_URL`
+`AGENTSERVE_REDIS_HOST`
+`AGENTSERVE_REDIS_PORT`
+`AGENTSERVE_SERVER_HOST`
+`AGENTSERVE_SERVER_PORT`
 
 **Example:**
 
 ```bash
-agentserve init my_new_project --framework openai
+export AGENTSERVE_TASK_QUEUE=redis
+export AGENTSERVE_REDIS_HOST=redis-server-host
+export AGENTSERVE_REDIS_PORT=6379
 ```
 
-**Result:**
+## Advanced Usage
 
-- Creates a new directory named `my_new_project`.
-- Populates it with necessary AgentServe files tailored to the OpenAI framework.
-- Sets up `requirements.txt` with necessary dependencies.
+### Integrating with Existing Projects
 
-### Build Command
+You can integrate AgentServe into your existing projects by importing agentserve and defining your agent function.
 
-```bash
-agentserve build
-```
-
-### Run Command
-
-```bash
-agentserve run
-```
-
-## Adding AgentServe to an Existing Project
-
-This guide provides step-by-step instructions to manually integrate AgentServe into your existing Python application. By following these steps, you can add AI agent capabilities to your project without using the AgentServe CLI.
-
-### Steps to Integrate AgentServe
-
-#### 1. Install AgentServe
-
-First, install the agentserve package using pip:
-
-```bash
-pip install agentserve
-```
-
-If you're using a virtual environment, make sure it is activated before running the command.
-
-#### 2. Update Your requirements.txt
-
-If your project uses a requirements.txt file, add agentserve to it:
-
-```
-agentserve
-```
-
-This ensures that AgentServe will be installed when setting up the project in the future.
-
-#### 3. Create an agents Directory
-
-Create a new directory called agents in the root of your project. This is where your agent classes will reside.
-
-```bash
-mkdir agents
-```
-
-#### 4. Implement Your Agent Class
-
-Inside the  directory, create a new Python file for your agent. For example, my_agent.py:
-
-```bash
-touch agents/my_agent.py
-```
-
-Open agent/my_agent.py and implement your agent by subclassing Agent from agentserve:
+**Example:**
 
 ```python
-# agents/my_agent.py
-from agentserve import Agent
+# main.py
+import agentserve
 
-class MyAgent(Agent):
-    def process(self, task_data):
-        # Implement your agent's logic here
-        client = OpenAI()
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "system", "content": "You are a helpful assistant."}, {"role": "user", "content": task_data}]
-        )
-        return response.choices[0].message.content
-```
+app = agentserve.app()
 
-#### 5. Create or Update Your main.py
+@app.agent
+def my_custom_agent(task_data):
+    # Your custom agent logic (e.g. using LangChain, LlamaIndex, etc.)
+    result = perform_complex_computation(task_data)
+    return {"result": result}
 
-In the root of your project, create a main.py file if it doesn't already exist:
-
-```bash
-touch main.py
-```
-
-Open main.py and set up the AgentServer:
-
-```python
-from agentserve import AgentServer
-from agents.my_agent import MyAgent
-
-agent_server = AgentServer(MyAgent)
-app = agent_server.app
-```
-
-#### 6. Build and Run the Server
-
-```bash
-agentserve build
-agentserve run
+if __name__ == "__main__":
+    app.run()
 ```
 
 ## Hosting
@@ -376,6 +250,7 @@ INSTRUCTIONS COMING SOON
 
 - [ ] Add support for streaming responses
 - [ ] Add easy instructions for more hosting options (GCP, Azure, AWS, etc.)
+- [ ] Add support for external storage for task results
 - [ ] Add support for multi model agents
 - [ ] Add support for more agent frameworks
 
