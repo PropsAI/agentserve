@@ -1,6 +1,7 @@
 # agentserve/agent_server.py
 
 from fastapi import FastAPI, HTTPException
+from pydantic import ValidationError
 from .queues.task_queue import TaskQueue
 from .agent_registry import AgentRegistry
 from typing import Dict, Any, Optional
@@ -35,7 +36,7 @@ class AgentServer:
                 agent_function = self.agent_registry.get_agent()
                 result = agent_function(task_data)
                 return {"result": result}
-            except ValueError as ve:
+            except ValidationError as ve:
                 if hasattr(ve, 'errors'):
                     raise HTTPException(
                         status_code=400,

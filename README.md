@@ -204,12 +204,12 @@ Set the desired configuration options using environment variables.
 
 You can override configurations using environment variables without modifying the configuration file.
 
-`AGENTSERVE_TASK_QUEUE`
-`AGENTSERVE_CELERY_BROKER_URL`
-`AGENTSERVE_REDIS_HOST`
-`AGENTSERVE_REDIS_PORT`
-`AGENTSERVE_SERVER_HOST`
-`AGENTSERVE_SERVER_PORT`
+- `AGENTSERVE_TASK_QUEUE`
+- `AGENTSERVE_CELERY_BROKER_URL`
+- `AGENTSERVE_REDIS_HOST`
+- `AGENTSERVE_REDIS_PORT`
+- `AGENTSERVE_SERVER_HOST`
+- `AGENTSERVE_SERVER_PORT`
 
 **Example:**
 
@@ -238,6 +238,29 @@ def my_custom_agent(task_data):
     # Your custom agent logic (e.g. using LangChain, LlamaIndex, etc.)
     result = perform_complex_computation(task_data)
     return {"result": result}
+
+if __name__ == "__main__":
+    app.run()
+```
+
+### Input Validation
+
+AgentServe allows you to validate the input to your agent function using Pydantic. Simply add an input schema to your agent function.
+
+**Example:**
+
+```python
+# main.py
+import agentserve
+from pydantic import BaseModel
+
+class MyInputSchema(BaseModel):
+    prompt: str
+
+@app.agent(input_schema=MyInputSchema)
+def my_custom_agent(task_data):
+    # Your custom agent logic
+    return {"result": "Hello, world!"}
 
 if __name__ == "__main__":
     app.run()
