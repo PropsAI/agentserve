@@ -8,14 +8,16 @@
 
 # AgentServe
 
+[![Discord](https://img.shields.io/badge/Discord-Join_Discord-blue?style=flat&logo=Discord)](https://discord.gg/JkPrCnExSf)
 [![GitHub](https://img.shields.io/badge/GitHub-View_on_GitHub-blue?style=flat&logo=GitHub)](https://github.com/PropsAI/agentserve)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 ![PyPI Version](https://img.shields.io/pypi/v/agentserve.svg)
 ![GitHub Stars](https://img.shields.io/github/stars/PropsAI/agentserve?style=social)
 ![Beta](https://img.shields.io/badge/Status-Beta-yellow)
 
-
 AgentServe is an lightweight framework for hosting and scaling AI agents. It is designed to be easy to use and integrate with existing projects and agent / LLM frameworks. It wraps your agent in a REST API and supports optional task queuing for scalability.
+
+Join the [Discord](https://discord.gg/JkPrCnExSf) for support and discussion.
 
 ## Goals and Objectives
 
@@ -55,7 +57,6 @@ pip install -U agentserve
 
 Make sure your virtual environment is activated if you're using one.
 
-
 ### 2. Create or Update Your Agent
 
 Within your entry point file (e.g. `main.py`) we will import `agentserve` and create an app instance, then decorate an agent function with `@app.agent`. Finally, we will call `app.run()` to start the server.
@@ -86,6 +87,7 @@ if __name__ == "__main__":
 ```
 
 In this example:
+
 - We import agentserve and create an app instance using `agentserve.app()`.
 - We define our agent function `my_agent` and decorate it with `@app.agent`.
 - Within the agent function, we implement our agent's logic.
@@ -109,7 +111,7 @@ Create a file named agentserve.yaml in your project directory:
 ```yaml
 # agentserve.yaml
 
-task_queue: celery  # Options: 'local', 'redis', 'celery'
+task_queue: celery # Options: 'local', 'redis', 'celery'
 
 celery:
   broker_url: pyamqp://guest@localhost//
@@ -145,6 +147,7 @@ curl -X POST http://localhost:8000/task/sync \
      -H "Content-Type: application/json" \
        -d '{"input": "Test input"}'
 ```
+
 **Asynchronously process a task**
 
 `POST /task/async`
@@ -175,7 +178,7 @@ curl http://localhost:8000/task/result/1234567890
 
 AgentServe allows you to configure various aspects of the application using a configuration file or environment variables.
 
-#### Using agentserve.yaml 
+#### Using agentserve.yaml
 
 Place an `agentserve.yaml` file in your project directory with the desired configurations.
 
@@ -184,7 +187,7 @@ Place an `agentserve.yaml` file in your project directory with the desired confi
 ```yaml
 # agentserve.yaml
 
-task_queue: celery  # Options: 'local', 'redis', 'celery'
+task_queue: celery # Options: 'local', 'redis', 'celery'
 
 celery:
   broker_url: pyamqp://guest@localhost//
@@ -283,5 +286,7 @@ INSTRUCTIONS COMING SOON
 This project is licensed under the MIT License.
 
 ## Contact
+
+Join the [Discord](https://discord.gg/JkPrCnExSf) for support and discussion.
 
 For any questions or issues, please contact Peter at peter@getprops.ai.
