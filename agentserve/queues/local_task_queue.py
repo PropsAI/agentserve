@@ -9,15 +9,25 @@ class LocalTaskQueue(TaskQueue):
     def __init__(self):
         self.results = {}
         self.statuses = {}
+        self.loop = asyncio.new_event_loop()
+        self.thread = threading.Thread(target=self._run_event_loop, daemon=True)
+        self.thread.start()
+
+    def _run_event_loop(self):
+        asyncio.set_event_loop(self.loop)
+        self.loop.run_forever()
 
     def enqueue(self, agent_function, task_data: Dict[str, Any], task_id: str):
         self.statuses[task_id] = 'queued'
-        threading.Thread(target=self._run_task, args=(agent_function, task_data, task_id)).start()
+        asyncio.run_coroutine_threadsafe(
+            self._run_task(agent_function, task_data, task_id),
+            self.loop
+        )
 
-    def _run_task(self, agent_function, task_data: Dict[str, Any], task_id: str):
+    async def _run_task(self, agent_function, task_data: Dict[str, Any], task_id: str):
         self.statuses[task_id] = 'in_progress'
         try:
-            result = agent_function(task_data)
+            result = await agent_function(task_data)
             self.results[task_id] = result
             self.statuses[task_id] = 'completed'
         except Exception as e:
