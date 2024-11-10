@@ -6,35 +6,50 @@ from .queues.task_queue import TaskQueue
 from .agent_registry import AgentRegistry
 from typing import Dict, Any, Optional
 from .config import Config
+from .logging_config import setup_logger
 import uuid
 
 class AgentServer:
     def __init__(self, config: Optional[Config] = None):
-        self.app = FastAPI()
+        self.logger = setup_logger("agentserve.server")
+        self.app = FastAPI(debug=True)
         self.agent_registry = AgentRegistry()
         self.config = config or Config()
         self.task_queue = self._initialize_task_queue()
         self.agent = self.agent_registry.register_agent
         self._setup_routes()
+        self.logger.info("AgentServer initialized")
     
     def _initialize_task_queue(self):
         task_queue_type = self.config.get('task_queue', 'local').lower()
-        if task_queue_type == 'celery':
-            from .celery_task_queue import CeleryTaskQueue
-            return CeleryTaskQueue(self.config)
-        elif task_queue_type == 'redis':
-            from .redis_task_queue import RedisTaskQueue
-            return RedisTaskQueue(self.config)
-        else:
-            from .queues.local_task_queue import LocalTaskQueue
-            return LocalTaskQueue()
+        self.logger.info(f"Initializing {task_queue_type} task queue")
+        
+        try:
+            if task_queue_type == 'celery':
+                from .queues.celery_task_queue import CeleryTaskQueue
+                return CeleryTaskQueue(self.config)
+            elif task_queue_type == 'redis':
+                from .queues.redis_task_queue import RedisTaskQueue
+                return RedisTaskQueue(self.config)
+            else:
+                from .queues.local_task_queue import LocalTaskQueue
+                return LocalTaskQueue()
+        except Exception as e:
+            self.logger.error(f"Failed to initialize task queue: {str(e)}")
+            raise
     
     def _setup_routes(self):
         @self.app.post("/task/sync")
         async def sync_task(task_data: Dict[str, Any]):
+            self.logger.debug(f"sync_task called with data: {task_data}")
             try:
                 agent_function = self.agent_registry.get_agent()
-                result = agent_function(task_data)
+                if getattr(agent_function, '_is_async', False):
+                    self.logger.info("Function is async, running in event loop")
+                    result = await agent_function(task_data)
+                else:
+                    self.logger.info("Function is sync, running directly")
+                    result = agent_function(task_data)
                 return {"result": result}
             except ValidationError as ve:
                 if hasattr(ve, 'errors'):
