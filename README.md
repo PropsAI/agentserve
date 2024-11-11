@@ -15,7 +15,7 @@
 ![GitHub Stars](https://img.shields.io/github/stars/PropsAI/agentserve?style=social)
 ![Beta](https://img.shields.io/badge/Status-Beta-yellow)
 
-AgentServe is an lightweight framework for hosting and scaling AI agents. It is designed to be easy to use and integrate with existing projects and agent / LLM frameworks. It wraps your agent in a REST API and supports optional task queuing for scalability.
+AgentServe is a lightweight framework for hosting and scaling AI agents. It is designed to be easy to use and integrate with existing projects and agent / LLM frameworks. It wraps your agent in a REST API and supports optional task queuing for scalability.
 
 Join the [Discord](https://discord.gg/JkPrCnExSf) for support and discussion.
 
