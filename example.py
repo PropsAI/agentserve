@@ -2,7 +2,7 @@ import agentserve
 from pydantic import BaseModel
 
 # Configure logging level
-agentserve.setup_logger(level="DEBUG")  # or "INFO", "WARNING", "ERROR"
+agentserve.setup_logger(level="INFO")  # or "INFO", "WARNING", "ERROR"
 
 app = agentserve.app()
 

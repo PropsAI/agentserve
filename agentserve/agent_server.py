@@ -33,7 +33,7 @@ class AgentServer:
                 return RedisTaskQueue(self.config)
             else:
                 from .queues.local_task_queue import LocalTaskQueue
-                return LocalTaskQueue()
+                return LocalTaskQueue(self.config)
         except Exception as e:
             self.logger.error(f"Failed to initialize task queue: {str(e)}")
             raise

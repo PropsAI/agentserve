@@ -12,7 +12,7 @@ class MyInputSchema(BaseModel):
 
 @app.agent(input_schema=MyInputSchema)
 async def my_agent(task_data):
-    await asyncio.sleep(1)
+    await asyncio.sleep(20)
     return task_data
 
 app.run()

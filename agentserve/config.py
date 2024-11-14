@@ -42,6 +42,9 @@ class Config:
                 server_config['host'] = server_host
             if server_port:
                 server_config['port'] = int(server_port)
+                
+        queue_config = config.setdefault('queue', {})
+        queue_config['max_workers'] = int(os.getenv('AGENTSERVE_QUEUE_MAX_WORKERS', queue_config.get('max_workers', 10)))
 
         return config
 

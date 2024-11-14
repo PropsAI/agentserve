@@ -199,6 +199,9 @@ redis:
 server:
   host: 0.0.0.0
   port: 8000
+
+queue: # if using local task queue
+  max_workers: 10 # default
 ```
 
 #### Using Environment Variables
