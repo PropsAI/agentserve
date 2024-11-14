@@ -216,6 +216,7 @@ You can override configurations using environment variables without modifying th
 - `AGENTSERVE_REDIS_PORT`
 - `AGENTSERVE_SERVER_HOST`
 - `AGENTSERVE_SERVER_PORT`
+- `AGENTSERVE_QUEUE_MAX_WORKERS`
 
 **Example:**
 
