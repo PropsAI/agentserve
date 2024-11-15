@@ -1,14 +1,14 @@
 # agentserve/local_task_queue.py
 
 import asyncio
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from .task_queue import TaskQueue
 import threading
 from ..logging_config import setup_logger
 import concurrent.futures
 
 class LocalTaskQueue(TaskQueue):
-    def __init__(self):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
         self.logger = setup_logger("agentserve.queue.local")
         self.results = {}
         self.statuses = {}
