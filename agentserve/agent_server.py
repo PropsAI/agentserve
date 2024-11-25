@@ -1,6 +1,7 @@
 # agentserve/agent_server.py
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
 from .queues.task_queue import TaskQueue
 from .agent_registry import AgentRegistry
@@ -12,9 +13,20 @@ import uuid
 class AgentServer:
     def __init__(self, config: Optional[Config] = None):
         self.logger = setup_logger("agentserve.server")
-        self.app = FastAPI(debug=True)
-        self.agent_registry = AgentRegistry()
         self.config = config or Config()
+        self.app = FastAPI()
+
+        # Add CORS middleware with custom origins
+        cors_config = self.config.get_nested('fastapi', 'cors', default={})
+        self.app.add_middleware(
+            CORSMiddleware,
+            allow_origins=cors_config.get('allow_origins', ["*"]),
+            allow_credentials=cors_config.get('allow_credentials', True),
+            allow_methods=cors_config.get('allow_methods', ["*"]),
+            allow_headers=cors_config.get('allow_headers', ["*"]),
+        )
+
+        self.agent_registry = AgentRegistry()
         self.task_queue = self._initialize_task_queue()
         self.agent = self.agent_registry.register_agent
         self._setup_routes()
