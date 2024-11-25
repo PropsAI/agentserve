@@ -17,6 +17,32 @@ class Config:
 
         # Override with environment variables
         config['task_queue'] = os.getenv('AGENTSERVE_TASK_QUEUE', config.get('task_queue', 'local'))
+        
+        # FastAPI configuration
+        fastapi_config = config.setdefault('fastapi', {})
+        # CORS configuration within FastAPI config
+        cors_config = fastapi_config.setdefault('cors', {})
+        cors_origins_env = os.getenv('AGENTSERVE_CORS_ORIGINS')
+        if cors_origins_env:
+            cors_config['allow_origins'] = [origin.strip() for origin in cors_origins_env.split(',')]
+        else:
+            cors_config.setdefault('allow_origins', ["*"])
+
+        cors_config['allow_credentials'] = self._get_bool_env(
+            'AGENTSERVE_CORS_ALLOW_CREDENTIALS',
+            cors_config.get('allow_credentials', True)
+        )
+        cors_methods_env = os.getenv('AGENTSERVE_CORS_ALLOW_METHODS')
+        if cors_methods_env:
+            cors_config['allow_methods'] = [method.strip() for method in cors_methods_env.split(',')]
+        else:
+            cors_config.setdefault('allow_methods', ["*"])
+
+        cors_headers_env = os.getenv('AGENTSERVE_CORS_ALLOW_HEADERS')
+        if cors_headers_env:
+            cors_config['allow_headers'] = [header.strip() for header in cors_headers_env.split(',')]
+        else:
+            cors_config.setdefault('allow_headers', ["*"])
 
         # Celery configuration
         celery_broker_url = os.getenv('AGENTSERVE_CELERY_BROKER_URL')
@@ -60,3 +86,9 @@ class Config:
             if value is None:
                 return default
         return value
+    
+    def _get_bool_env(self, env_var, default):
+        val = os.getenv(env_var)
+        if val is not None:
+            return val.lower() in ('true', '1', 'yes')
+        return default

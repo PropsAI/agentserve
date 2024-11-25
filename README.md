@@ -204,6 +204,7 @@ queue: # if using local task queue
   max_workers: 10 # default
 ```
 
+
 #### Using Environment Variables
 
 Set the desired configuration options using environment variables.
@@ -224,6 +225,39 @@ You can override configurations using environment variables without modifying th
 export AGENTSERVE_TASK_QUEUE=redis
 export AGENTSERVE_REDIS_HOST=redis-server-host
 export AGENTSERVE_REDIS_PORT=6379
+```
+
+### FastAPI Configuration
+
+You can specify FastAPI settings, including CORS configuration, using the `fastapi` key in your `agentserve.yaml` configuration file.
+
+**Example:**
+
+```yaml
+# agentserve.yaml
+
+fastapi:
+  cors:
+    allow_origins:
+      - "http://localhost:3000"
+      - "https://yourdomain.com"
+    allow_credentials: true
+    allow_methods:
+      - "*"
+    allow_headers:
+      - "*"
+```
+#### Using Environment Variables
+
+Alternatively, you can set the desired configuration options using environment variables.
+
+**Example:**
+
+```bash
+export AGENTSERVE_CORS_ORIGINS="http://localhost:3000,https://yourdomain.com"
+export AGENTSERVE_CORS_ALLOW_CREDENTIALS="true"
+export AGENTSERVE_CORS_ALLOW_METHODS="GET,POST"
+export AGENTSERVE_CORS_ALLOW_HEADERS="Content-Type,Authorization"
 ```
 
 ## Advanced Usage
